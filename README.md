@@ -1,2 +1,2 @@
 # Daily
-(/public/icons/daily_512.png)
+[DAILY LOGO ](/public/icons/daily_512.png)
