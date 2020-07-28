@@ -21,10 +21,12 @@ import CustomButton from "./components/button/CustomButton";
 import GoalOptions from "./screens/GoalOptions";
 import EditGoal from "./screens/EditGoal";
 import Tutorial from "./tutorial/Tutorial";
+import StatsIcon from "./components/icons/StatsIcon";
+import StatsScreen from "./screens/StatsScreen";
 
 const Stack = createStackNavigator();
 export default function App() {
-    store.dispatch(resetAsyncStorage());
+    // store.dispatch(resetAsyncStorage());
     return (
         <Provider store={store}>
             <NavigationContainer>
@@ -85,6 +87,13 @@ export default function App() {
                             headerShown: false,
                         }}
                     />
+                    <Stack.Screen
+                        name="Stats"
+                        component={StatsScreen}
+                        options={{
+                            ...defaultNavigationOptions,
+                        }}
+                    />
                 </Stack.Navigator>
             </NavigationContainer>
         </Provider>
@@ -105,6 +114,20 @@ const homepageSettings = {
                 style={styles.setting}
                 ChildComponent={SettingButton}
                 // onPress={}
+            />
+            <MainTitle {...props} />
+        </View>
+    ),
+};
+const statsMenu = {
+    headerTitle: (props) => (
+        <View style={styles.settingHeader}>
+            <CustomButton
+                style={styles.setting}
+                ChildComponent={StatsIcon}
+                onPress={() => {
+                    props.navigation.push("Stats");
+                }}
             />
             <MainTitle {...props} />
         </View>

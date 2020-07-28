@@ -32,10 +32,7 @@ function FirstTime({ navigation, setFirstUse }) {
                     title="Start!"
                     style={styles.buttonStyle}
                     onPress={() => {
-                        // navigation.pop();
-                        navigation.popToTop();
                         setFirstUse();
-                        // navigation.push("Home");
                     }}
                 ></CustomButton>
                 <CustomButton

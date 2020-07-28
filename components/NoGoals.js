@@ -2,6 +2,7 @@ import React from "react";
 import { Text, View, StyleSheet } from "react-native";
 import CustomButton from "./button/CustomButton";
 import GoalAdd from "./button/GoalAdd";
+import EditIcon from "./icons/EditIcon";
 
 const NoGoals = ({ navigation }) => {
     let addGoal = () => {
@@ -31,6 +32,15 @@ const styles = StyleSheet.create({
         // borderWidth: 2,
         alignItems: "center",
         justifyContent: "center",
+    },
+    stats: {
+        position: "absolute",
+        width: 60,
+        height: 60,
+        backgroundColor: null,
+        // top: 0,
+        bottom: 50,
+        left: 30,
     },
     message: {
         padding: 10,

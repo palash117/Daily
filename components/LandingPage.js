@@ -32,6 +32,7 @@ function LandingPage({ checkFirstUse, firstUse, navigation, loadGoals }) {
         <View style={styles.main}>
             <DailyLogo />
             <SplashScreen></SplashScreen>
+            {!loading && !isFirstTime && navigation.push("Home")}
         </View>
     );
 }

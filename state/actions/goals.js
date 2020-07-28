@@ -9,9 +9,10 @@ import {
 import { AsyncStorage } from "react-native";
 import { nanoid } from "nanoid/async/index.native";
 
-const GOALS = "GOALS";
-const GOAL_IDS = "GOAL_IDS";
-const GOAL_KEY = "GOAL_KEY";
+export const GOALS = "GOALS";
+export const GOAL_IDS = "GOAL_IDS";
+export const GOAL_KEY = "GOAL_KEY";
+export const GOAL_HISTORY_PREFIX = "H";
 
 const createAction = (type, payload) => {
     if (payload) {
@@ -60,14 +61,17 @@ export const addGoal = (goalString) => async (dispatch) => {
             id: key,
             goalStr: goalString,
             changeKey: key,
+            goalAddedDate: new Date().toISOString(),
         };
         let allIds = JSON.parse(await AsyncStorage.getItem(GOAL_IDS));
         if (!allIds) {
             allIds = [];
         }
+
         allIds.push(goal.id);
         await AsyncStorage.setItem(GOAL_IDS, JSON.stringify(allIds));
         await AsyncStorage.setItem(GOAL_KEY + goal.id, JSON.stringify(goal));
+        initHistoryForGoal(key);
         console.log(goal);
         dispatch(createAction(ADD_GOAL, goal));
     } catch (err) {
@@ -91,6 +95,7 @@ export const checkGoal = (goalId, type = true) => async (dispatch) => {
         }
         let changeKey = await nanoid();
         goal.changeKey = changeKey;
+        updateHistory(goalId, type);
         await AsyncStorage.setItem(GOAL_KEY + goalId, JSON.stringify(goal));
         dispatch(createAction(CHECK_GOAL, { goalId, type }));
     } catch (err) {
@@ -101,8 +106,17 @@ export const setCurrentGoal = (goal) => (dispatch) => {
     dispatch(createAction(SET_CURRENT_GOAL, goal));
 };
 
-export const deleteGoal = (goalId) => (dispatch) => {
-    dispatch(createAction(DELETE_GOAL, goalId));
+export const deleteGoal = (goalId) => async (dispatch) => {
+    try {
+        let allIds = JSON.parse(await AsyncStorage.getItem(GOAL_IDS));
+        allIds = allIds.filter((id) => id !== goalId);
+        await AsyncStorage.setItem(GOAL_IDS, JSON.stringify(allIds));
+        await AsyncStorage.removeItem(GOAL_KEY + goalId);
+
+        dispatch(createAction(DELETE_GOAL, goalId));
+    } catch (error) {
+        console.log("error unable to delete goals", err);
+    }
 };
 
 export const editGoal = (goalId, goalsStr) => async (dispatch) => {
@@ -117,6 +131,58 @@ export const editGoal = (goalId, goalsStr) => async (dispatch) => {
         console.log("error unable to edit goals", err);
     }
 };
+
+const updateHistory = async (goalId, type) => {
+    let historyKey = GOAL_HISTORY_PREFIX + goalId;
+    let history = JSON.parse(await AsyncStorage.getItem(historyKey));
+
+    try {
+        switch (type) {
+            case true:
+                history.push(new Date().toISOString());
+                break;
+            case false:
+                let lastEntry = history[history.length - 1];
+                if (isToday(new Date(lastEntry))) {
+                    history.splice(-1);
+                }
+                break;
+            default:
+                break;
+        }
+
+        await AsyncStorage.setItem(historyKey, JSON.stringify(history));
+    } catch (err) {
+        console.log(
+            "error unable to update goal history for goalId ",
+            goalId,
+            err
+        );
+    }
+};
+
+const initHistoryForGoal = async (goalId) => {
+    let historyKey = GOAL_HISTORY_PREFIX + goalId;
+    try {
+        let randomDates = [];
+        // for (let i = 60; i > 1; i--) {
+        //     let possible = Math.floor(Math.random() * 2) == 0 ? true : false;
+        //     if (possible) {
+        //         let date = new Date();
+        //         date.setDate(date.getDate() - i);
+        //         randomDates.push(date.toISOString());
+        //     }
+        // }
+        await AsyncStorage.setItem(historyKey, JSON.stringify(randomDates));
+    } catch (err) {
+        console.log(
+            "error unable to init goal history for goalId ",
+            goalId,
+            err
+        );
+    }
+};
+
 const isToday = (someDate) => {
     const today = new Date();
     return (
