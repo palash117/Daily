@@ -16,7 +16,7 @@ const StatsScreen = ({ navigation, history, fetchHistory }) => {
         <View style={styles.main}>
             <View style={styles.heatmap}>
                 <Text style={styles.headmapMessage}>
-                    Your last 2 months goal completion heat map
+                    Goal completion heatmap for last 2 months
                 </Text>
                 {fulldateMap && fulldateMap.length > 0 && (
                     <ContributionGraph
