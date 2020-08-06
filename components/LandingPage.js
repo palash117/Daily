@@ -14,7 +14,6 @@ import { loadGoals } from "../state/actions/goals";
 const Stack = createStackNavigator();
 function LandingPage({ checkFirstUse, firstUse, navigation, loadGoals }) {
     const { isFirstTime, loading } = firstUse ? firstUse : {};
-    console.log("landing rendered ", isFirstTime, firstUse);
     useEffect(() => {
         checkFirstUse();
         loadGoals();

@@ -9,7 +9,6 @@ const createAction = (type, payload) => {
 };
 export const checkFirstUse = () => async (dispatch) => {
     try {
-        // console.log("CONST CHECK_FIRST_TIME", CHECK_FIRST_TIME);
         let data = await AsyncStorage.getItem(NOT_FIRST_USE);
         if (!data) {
             // dispatch(createAction(CHECK_FIRST_TIME, data));

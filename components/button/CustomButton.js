@@ -28,7 +28,6 @@ function CustomButton(props) {
     }
 
     const press = () => {
-        // console.log("button pressed, calling onPress");
         if (!disableVibration && !disablePressVibration) {
             if (pressVibrationTime) {
                 Vibration.vibrate(pressVibrationTime);
@@ -51,7 +50,6 @@ function CustomButton(props) {
                 Vibration.vibrate(10);
             }
         }
-        // console.log("button long pressed, calling onLongPress");
         if (onLongPress) {
             onLongPress();
         }

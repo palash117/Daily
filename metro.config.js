@@ -4,7 +4,6 @@ module.exports = (async () => {
     const {
         resolver: { sourceExts, assetExts },
     } = await getDefaultConfig();
-    // console.log("svg resolver called");
     return {
         transformer: {
             babelTransformerPath: require.resolve(

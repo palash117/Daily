@@ -5,9 +5,11 @@ import {
     EDIT_GOAL,
     CHECK_GOAL,
     SET_CURRENT_GOAL,
+    CURRENT_GOAL_PREV_HISTORY,
 } from "../actions/actionTypes";
 import { AsyncStorage } from "react-native";
 import { nanoid } from "nanoid/async/index.native";
+import { isToday, isYesterday, yesterdayDate } from "./utils";
 
 export const GOALS = "GOALS";
 export const GOAL_IDS = "GOAL_IDS";
@@ -30,7 +32,6 @@ export const loadGoals = () => async (dispatch) => {
         for (let id of allIds) {
             console.log("querying for id ", id);
             let value = JSON.parse(await AsyncStorage.getItem(GOAL_KEY + id));
-            // console.log("goal, ", value, value.goalStr.length);
             data.push(value);
         }
 
@@ -81,6 +82,7 @@ export const addGoal = (goalString) => async (dispatch) => {
 export const checkGoal = (goalId, type = true) => async (dispatch) => {
     try {
         let goal = JSON.parse(await AsyncStorage.getItem(GOAL_KEY + goalId));
+        let date = new Date();
         switch (type) {
             case true:
             default:
@@ -95,7 +97,7 @@ export const checkGoal = (goalId, type = true) => async (dispatch) => {
         }
         let changeKey = await nanoid();
         goal.changeKey = changeKey;
-        updateHistory(goalId, type);
+        updateHistory(goalId, type, false);
         await AsyncStorage.setItem(GOAL_KEY + goalId, JSON.stringify(goal));
         dispatch(createAction(CHECK_GOAL, { goalId, type }));
     } catch (err) {
@@ -104,6 +106,11 @@ export const checkGoal = (goalId, type = true) => async (dispatch) => {
 };
 export const setCurrentGoal = (goal) => (dispatch) => {
     dispatch(createAction(SET_CURRENT_GOAL, goal));
+};
+
+export const checkYesterdayGoal = (goalId, type = true) => async (dispatch) => {
+    updateHistory(goalId, type, true);
+    dispatch({ type: CURRENT_GOAL_PREV_HISTORY, payload: type });
 };
 
 export const deleteGoal = (goalId) => async (dispatch) => {
@@ -132,19 +139,46 @@ export const editGoal = (goalId, goalsStr) => async (dispatch) => {
     }
 };
 
-const updateHistory = async (goalId, type) => {
+const updateHistory = async (goalId, type, yesterday) => {
     let historyKey = GOAL_HISTORY_PREFIX + goalId;
     let history = JSON.parse(await AsyncStorage.getItem(historyKey));
-
+    let date = new Date();
+    if (yesterday) {
+        date = yesterdayDate();
+    }
     try {
         switch (type) {
             case true:
-                history.push(new Date().toISOString());
+                history.push(date.toISOString());
                 break;
             case false:
-                let lastEntry = history[history.length - 1];
-                if (isToday(new Date(lastEntry))) {
-                    history.splice(-1);
+                let found = false;
+                let historyIndex = 0;
+                for (let i = 0; i < history.length; i++) {
+                    let historyDate = new Date(history[i]);
+                    if (yesterday) {
+                        let isDateYesterday = isYesterday(historyDate);
+                        console.log(
+                            "is history date yesterday ",
+                            historyDate,
+                            ": ",
+                            isDateYesterday
+                        );
+                        if (isDateYesterday === true) {
+                            found = true;
+                            historyIndex = i;
+                            break;
+                        }
+                    } else if (isToday(historyDate)) {
+                        found = true;
+                        historyIndex = i;
+                        break;
+                    }
+                }
+                if (found) {
+                    console.log("removing history ", history[historyIndex]);
+                    history.splice(historyIndex, 1);
+                    console.log("history after removal", history);
                 }
                 break;
             default:
@@ -181,13 +215,4 @@ const initHistoryForGoal = async (goalId) => {
             err
         );
     }
-};
-
-const isToday = (someDate) => {
-    const today = new Date();
-    return (
-        someDate.getDate() == today.getDate() &&
-        someDate.getMonth() == today.getMonth() &&
-        someDate.getFullYear() == today.getFullYear()
-    );
 };

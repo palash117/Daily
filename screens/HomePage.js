@@ -20,10 +20,10 @@ const HomePage = ({ goalData, loadGoals, navigation }) => {
             </View>
         );
     }
-    // const onBackPress = () => {
-    //     return true;
-    // };
-    // BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    const onBackPress = () => {
+        return true;
+    };
+    BackHandler.addEventListener("hardwareBackPress", onBackPress);
     return (
         <View style={styles.main}>
             {goals.length == 0 ? (

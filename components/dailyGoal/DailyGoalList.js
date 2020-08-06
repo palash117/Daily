@@ -8,19 +8,8 @@ import { setCurrentGoal } from "../../state/actions/goals";
 import DailyGoalListMessage from "./DailyGoalListMessage";
 
 const DailyGoalList = ({ dailyGoalList, navigation, setCurrentGoal }) => {
-    // const [goalsState, setstate] = useState(dailyGoalList);
     let goalsState = dailyGoalList;
-    const updateGoalList = (goal) => {
-        // console.log("goalsUpdated");
-        // setstate(
-        //     goalsState.map((g) => {
-        //         if (g.id == goal.id) {
-        //             return goal;
-        //         }
-        //         return g;
-        //     })
-        // );
-    };
+    const updateGoalList = (goal) => {};
     return (
         <View style={styles.main}>
             <DailyGoalListMessage

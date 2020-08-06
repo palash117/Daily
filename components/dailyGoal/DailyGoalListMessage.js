@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text } from "react-native";
 
 const DailyGoalListMessage = ({ goals, style }) => {
-    console.log("dailyGoalmessge rendered");
     let completed = goals
         .filter((g) => g.completed)
         .map((g) => 1)

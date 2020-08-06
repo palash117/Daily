@@ -5,6 +5,7 @@ import {
     EDIT_GOAL,
     CHECK_GOAL,
     SET_CURRENT_GOAL,
+    CURRENT_GOAL_PREV_HISTORY,
 } from "../actions/actionTypes";
 
 const initialState = {
@@ -54,6 +55,14 @@ export default function (state = initialState, action) {
                 }),
             };
         }
+        case CURRENT_GOAL_PREV_HISTORY:
+            return {
+                ...state,
+                currentGoal: {
+                    ...state.currentGoal,
+                    isMarkedForYesterday: payload,
+                },
+            };
         default:
             return state;
     }

@@ -3,22 +3,33 @@ import { StyleSheet, Text, View } from "react-native";
 import { connect } from "react-redux";
 import CustomButton from "../components/button/CustomButton";
 import BackIcon from "../components/icons/BackIcon";
-import { fetchHistory } from "../state/actions/history";
+import { fetchHistory, clearHistory } from "../state/actions/history";
 import { ContributionGraph } from "react-native-chart-kit";
+import SplashScreen from "../components/SplashScreen";
 
-const StatsScreen = ({ navigation, history, fetchHistory }) => {
-    const { fulldateMap } = history ? history : {};
+const StatsScreen = ({ navigation, history, fetchHistory, clearHistory }) => {
+    const { fulldateMap, loading } = history ? history : {};
     useEffect(() => {
         fetchHistory();
+        return () => {
+            clearHistory();
+        };
     }, []);
-    console.log("datemap at statsscreen", fulldateMap);
     return (
         <View style={styles.main}>
             <View style={styles.heatmap}>
-                <Text style={styles.headmapMessage}>
-                    Goal completion heatmap for last 2 months
-                </Text>
-                {fulldateMap && fulldateMap.length > 0 && (
+                {!loading && fulldateMap && fulldateMap.length == 0 ? (
+                    <Text
+                        style={styles.headmapMessage}
+                    >{`Once you have completed some goals,\nYou can track your activity heatmap here.`}</Text>
+                ) : (
+                    <Text style={styles.headmapMessage}>
+                        Goal completion heatmap for last 2 months
+                    </Text>
+                )}
+
+                {loading && <SplashScreen></SplashScreen>}
+                {!loading && fulldateMap && fulldateMap.length > 0 && (
                     <ContributionGraph
                         values={fulldateMap}
                         endDate={new Date()}
@@ -61,10 +72,9 @@ const StatsScreen = ({ navigation, history, fetchHistory }) => {
 };
 
 const mapStateToProps = (state) => {
-    console.log("logging redux state", state);
     return { history: state.history };
 };
-const mapActionsToProps = { fetchHistory };
+const mapActionsToProps = { fetchHistory, clearHistory };
 export default connect(mapStateToProps, mapActionsToProps)(StatsScreen);
 
 const styles = StyleSheet.create({
@@ -77,6 +87,7 @@ const styles = StyleSheet.create({
     },
     heatmap: {},
     headmapMessage: {
+        marginTop: 20,
         textAlign: "center",
     },
     buttons: {

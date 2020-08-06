@@ -2,22 +2,29 @@
   "expo": {
     "name": "daily",
     "slug": "daily",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./public/icons/daily_512.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./public/daily_1024.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": [],
     "ios": {
       "supportsTablet": true
+    },
+    "android": {
+      "permissions": [
+        "VIBRATE",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "package": "com.palash117.daily",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"

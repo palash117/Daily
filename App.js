@@ -23,6 +23,7 @@ import EditGoal from "./screens/EditGoal";
 import Tutorial from "./tutorial/Tutorial";
 import StatsIcon from "./components/icons/StatsIcon";
 import StatsScreen from "./screens/StatsScreen";
+import History from "./screens/History";
 
 const Stack = createStackNavigator();
 export default function App() {
@@ -90,6 +91,13 @@ export default function App() {
                     <Stack.Screen
                         name="Stats"
                         component={StatsScreen}
+                        options={{
+                            ...defaultNavigationOptions,
+                        }}
+                    />
+                    <Stack.Screen
+                        name="History"
+                        component={History}
                         options={{
                             ...defaultNavigationOptions,
                         }}
